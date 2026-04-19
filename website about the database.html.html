@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Commerce Database System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: #2a2a3d;
+    --accent: #00d4aa;
+    --accent2: #7c6af7;
+    --accent3: #f7a26a;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --danger: #ff6b6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* GRID BG */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    z-index: 1;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,212,170,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,212,170,0.1);
+    border: 1px solid rgba(0,212,170,0.3);
+    color: var(--accent);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .badge::before { content: '●'; font-size: 0.5rem; animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    animation: fadeDown 0.6s 0.1s ease both;
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 540px;
+    margin-bottom: 3rem;
+    animation: fadeDown 0.6s 0.2s ease both;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeDown 0.6s 0.3s ease both;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  @keyframes fadeDown {
+    from { opacity:0; transform: translateY(-20px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    margin-bottom: 3rem;
+    letter-spacing: -0.02em;
+  }
+
+  /* PROBLEMS */
+  .problems-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .problem-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .problem-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+
+  .problem-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .problem-card:hover::before { opacity: 1; }
+
+  .problem-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .problem-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+
+  .problem-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    line-height: 1.7;
+  }
+
+  .solution-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,212,170,0.1);
+    border: 1px solid rgba(0,212,170,0.2);
+    color: var(--accent);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+  }
+
+  /* TABLES */
+  .tables-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .level-group { grid-column: 1 / -1; }
+
+  .level-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .level-tables {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .table-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.78rem;
+    color: var(--text);
+    transition: all 0.15s;
+    cursor: default;
+  }
+
+  .table-chip:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: rgba(124,106,247,0.08);
+  }
+
+  /* QUERIES */
+  .queries-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .query-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .query-card:hover { border-color: var(--accent3); }
+
+  .query-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .query-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent3);
+    background: rgba(247,162,106,0.1);
+    border: 1px solid rgba(247,162,106,0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    min-width: 32px;
+    text-align: center;
+  }
+
+  .query-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .query-type {
+    margin-left: auto;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .query-desc {
+    padding: 0 1.5rem 1rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  /* TRIGGERS */
+  .triggers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .trigger-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border-left: 3px solid var(--danger);
+    transition: transform 0.2s;
+  }
+
+  .trigger-card:hover { transform: translateX(4px); }
+
+  .trigger-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--danger);
+    margin-bottom: 0.5rem;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .trigger-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* TOOLS */
+  .tools-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .tool-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .tool-badge:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .tool-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 2rem;
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">SQL Server · T-SQL · Database Design</div>
+  <h1>E-Commerce<br><span>Database System</span></h1>
+  <p class="hero-sub">A fully structured relational database covering the complete order lifecycle, customer management, payments, and support.</p>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">17</div><div class="stat-label">Tables</div></div>
+    <div class="stat"><div class="stat-num">2</div><div class="stat-label">Triggers</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Views</div></div>
+    <div class="stat"><div class="stat-num">9</div><div class="stat-label">Queries</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- BUSINESS PROBLEMS -->
+<section class="reveal">
+  <div class="section-label">// why it was built</div>
+  <h2>Business Problems Solved</h2>
+  <div class="problems-grid">
+
+    <div class="problem-card">
+      <div class="problem-icon">🔄</div>
+      <div class="problem-title">Loyalty Points Not Reversed on Cancellation</div>
+      <div class="problem-desc">Cancelled orders kept their loyalty points — customers exploited this to collect free points with no purchase.</div>
+      <span class="solution-tag">✓ Trigger: trg_ReverseLoyaltyOnCancel</span>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-icon">⚠️</div>
+      <div class="problem-title">Missing Critical Data Validations</div>
+      <div class="problem-desc">No checks on emails, prices, or promotions — dirty data entered the system freely causing downstream errors.</div>
+      <span class="solution-tag">✓ Strict CHECK Constraints</span>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-icon">🐌</div>
+      <div class="problem-title">Heavy DB from Storing Images Directly</div>
+      <div class="problem-desc">Storing binary images in the database caused severe performance degradation and high storage costs.</div>
+      <span class="solution-tag">✓ URL-based Image Storage</span>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-icon">💳</div>
+      <div class="problem-title">No Tracking for Outstanding Payments</div>
+      <div class="problem-desc">Delivered orders with unpaid balances had no visibility — leading to undetected revenue loss.</div>
+      <span class="solution-tag">✓ Outstanding Payments Query</span>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-icon">📦</div>
+      <div class="problem-title">No Visibility on Cart Abandonment</div>
+      <div class="problem-desc">No way to track how many carts were created vs converted, leaving marketing teams blind to drop-off patterns.</div>
+      <span class="solution-tag">✓ Cart Conversion Rate Query</span>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-icon">🔒</div>
+      <div class="problem-title">Returns Without Delivery Verification</div>
+      <div class="problem-desc">Return requests could be submitted even for undelivered orders, enabling fraudulent return claims.</div>
+      <span class="solution-tag">✓ Trigger: trg_ValidateReturnDelivery</span>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TABLES -->
+<section class="reveal">
+  <div class="section-label">// schema overview</div>
+  <h2>Database Tables</h2>
+
+  <div class="level-title">Level 1 — Independent Tables</div>
+  <div class="level-tables">
+    <div class="table-chip">Customer</div>
+    <div class="table-chip">Category</div>
+    <div class="table-chip">Promotion</div>
+  </div>
+
+  <div class="level-title">Level 2 — Core Entities</div>
+  <div class="level-tables">
+    <div class="table-chip">Address</div>
+    <div class="table-chip">Cart</div>
+    <div class="table-chip">Product</div>
+    <div class="table-chip">Brand</div>
+    <div class="table-chip">Size</div>
+    <div class="table-chip">Color</div>
+    <div class="table-chip">ProductVariant</div>
+  </div>
+
+  <div class="level-title">Level 3 — Junction & Media</div>
+  <div class="level-tables">
+    <div class="table-chip">ProductImage</div>
+    <div class="table-chip">ProductPromotion</div>
+    <div class="table-chip">CartItem</div>
+  </div>
+
+  <div class="level-title">Level 4 — Orders & Transactions</div>
+  <div class="level-tables">
+    <div class="table-chip">Order</div>
+    <div class="table-chip">OrderItem</div>
+    <div class="table-chip">Payment</div>
+    <div class="table-chip">Shipping</div>
+  </div>
+
+  <div class="level-title">Level 5 — Post-Operation Tables</div>
+  <div class="level-tables">
+    <div class="table-chip">OrderStatusHistory</div>
+    <div class="table-chip">Return</div>
+    <div class="table-chip">Refund</div>
+    <div class="table-chip">Review</div>
+    <div class="table-chip">SupportTicket</div>
+    <div class="table-chip">LoyaltyTransaction</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TRIGGERS -->
+<section class="reveal">
+  <div class="section-label">// automation</div>
+  <h2>Triggers</h2>
+  <div class="triggers-grid">
+    <div class="trigger-card">
+      <div class="trigger-name">trg_ReverseLoyaltyOnCancel</div>
+      <div class="trigger-desc">Fires after an order status update. Automatically reverses earned loyalty points when an order is cancelled.</div>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-name">trg_ValidateReturnDelivery</div>
+      <div class="trigger-desc">Fires before inserting a return. Blocks the operation if the order has not been marked as Delivered in the shipping system.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VIEWS & QUERIES -->
+<section class="reveal">
+  <div class="section-label">// analytics</div>
+  <h2>Views & Queries</h2>
+  <div class="queries-grid">
+
+    <div class="query-card">
+      <div class="query-header">
+        <span class="query-num">V1</span>
+        <span class="query-name">vw_CustomerMaster</span>
+        <span class="query-type">View</span>
+      </div>
+      <div class="query-desc">Displays customers with total orders and total completed payment amounts.</div>
+    </div>
+
+    <div class="query-card">
+      <div class="query-header">
+        <span class="query-num">V2</span>
+        <span class="query-name">vw_ProductCatalog</span>
+        <span class="query-type">View</span>
+      </div>
+      <div class="query-desc">Shows products with current price, total stock quantity, and stock status (In Stock / Low Stock / Out of Stock).</div>
+    </div>
+
+    <div class="query-card">
+      <div class="query-header">
+        <span class="query-num">V3</span>
+        <span class="query-name">vw_OrderDetails</span>
+        <span class="query-type">View</span>
+      </div>
+      <div class="query-desc">Detailed order info including customer name, product, payment status, and shipment status.</div>
+    </div>
+
+    <div class="query-card">
+      <div class="query-header">
+        <span class="query-num">V4</span>
+        <span class="query-name">vw_SupportSLA</span>
+        <span class="query-type">View</span>
+      </div>
+      <div class="query-desc">Monitors support ticket SLA compliance based on priority (High: 24h / Medium: 48h / Low: 72h).</div>
+    </div>
+
+    <div class="query-card">
+      <div class="query-header">
+        <span class="query-num">Q1</span>
+        <span class="query-name">Daily Sales Analysis</span>
+        <span class="query-type">Query</span>
+      </div>
+      <div class="query-desc">Analyzes daily sales performance including order count, total revenue, average order value, and items sold.</div>
+    </div>
+
+    <div class="query-card">
+      <div class="query-header">
+        <span class="query-num">Q2</span>
+        <span class="query-name">Cart Conversion Rate</span>
+        <span class="query-type">Query</span>
+      </div>
+      <div class="query-desc">Calculates monthly cart-to-order conversion rate to identify abandonment patterns.</div>
+    </div>
+
+    <div class="query-card">
+      <div class="query-header">
+        <span class="query-num">Q3</span>
+        <span class="query-name">Top 3 Products per Category</span>
+        <span class="query-type">Query</span>
+      </div>
+      <div class="query-desc">Uses DENSE_RANK() to identify the top 3 best-selling products in each category based on revenue.</div>
+    </div>
+
+    <div class="query-card">
+      <div class="query-header">
+        <span class="query-num">Q4</span>
+        <span class="query-name">Payment Method Analysis</span>
+        <span class="query-type">Query</span>
+      </div>
+      <div class="query-desc">Analyzes payment methods by transaction volume, total revenue, failed payments, and refund counts.</div>
+    </div>
+
+    <div class="query-card">
+      <div class="query-header">
+        <span class="query-num">Q5</span>
+        <span class="query-name">Outstanding Payments</span>
+        <span class="query-type">Query</span>
+      </div>
+      <div class="query-desc">Identifies delivered orders that have not been fully paid — enabling finance teams to follow up on revenue gaps.</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TOOLS -->
+<section class="reveal">
+  <div class="section-label">// built with</div>
+  <h2>Tools Used</h2>
+  <div class="tools-row">
+    <div class="tool-badge"><span class="tool-dot"></span> Microsoft SQL Server</div>
+    <div class="tool-badge"><span class="tool-dot" style="background:var(--accent2)"></span> SQL Server Management Studio</div>
+    <div class="tool-badge"><span class="tool-dot" style="background:var(--accent3)"></span> T-SQL · Transact-SQL</div>
+  </div>
+</section>
+
+<footer>
+  <p>E-Commerce Database System &nbsp;·&nbsp; Built with SQL Server &nbsp;·&nbsp; <a href="https://github.com/your-username">GitHub</a></p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
